@@ -1,5 +1,8 @@
 import torch.nn as nn
 
+from log_mel import LogMel
+from stft import Stft
+
 
 class AudioFrontEnd(nn.Module):
     def __init__(
