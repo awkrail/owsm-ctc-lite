@@ -1,6 +1,7 @@
 import argparse
 import yaml
 
+from audio_frontend import AudioFrontEnd
 
 class OWSM_CTC_Model:
     def __init__(
@@ -27,4 +28,7 @@ class OWSM_CTC_Model:
     def _build_model(self, args):
         token_list = args.token_list
         vocab_size = len(token_list)
+        
         import ipdb; ipdb.set_trace()
+        frontend = AudioFrontEnd()
+        input_size = frontend.output_size()
