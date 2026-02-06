@@ -50187,7 +50187,7 @@ frontend_conf:
     n_fft: 512
     win_length: 400
     hop_length: 160
-    fs: 16k
+    fs: 16000
 specaug: specaug
 specaug_conf:
     apply_time_warp: false
