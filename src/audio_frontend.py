@@ -21,7 +21,8 @@ class AudioFrontEnd(nn.Module):
         htk = False,
         apply_stft = True,
     ):
-        self.sample_rate = sample_rate
+        super().__init__()
+        self.sample_rate = fs
         self.hop_length = hop_length
 
         # This frontend_conf is copied from the original ESPNnet2
@@ -70,6 +71,10 @@ class AudioFrontEnd(nn.Module):
         )
         self.n_mels = n_mels
         self.frontend_type = "default"
+
+
+    def output_size(self):
+        return self.n_mels 
 
 
     def forward(self, input, input_lengths):

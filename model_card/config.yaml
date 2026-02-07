@@ -50205,7 +50205,7 @@ specaug_conf:
     num_time_mask: 10
 normalize: global_mvn
 normalize_conf:
-    stats_file: exp/s2t_stats_raw_bpe50000/train/feats_stats.npz
+    stats_file: model_card/feats_stats.npz
 model: espnet_ctc
 model_conf:
     interctc_weight: 0.8
