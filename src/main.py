@@ -8,11 +8,7 @@ def main(args):
         config_path = "model_card/config.yaml",
         model_path = "model_card/valid.total_count.ave_5best.till40epoch.pth",
     )
-
-    #audio_preprocessor = AudioPreprocessor()
-    #batch = audio_preprocessor.preprocess(args.input_audio_path)
-    # model = OWSM_CTC()
-    # res = model.predict(batch)
+    res = model.predict(args.input_audio_path)
 
 
 if __name__ == "__main__":

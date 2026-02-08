@@ -50171,7 +50171,7 @@ ctc_conf:
     brctc_risk_factor: 0.0
 use_preprocessor: true
 token_type: bpe
-bpemodel: data/token_list/bpe_unigram50000/bpe.model
+bpemodel: model_card/bpe.model
 non_linguistic_symbols: null
 cleaner: null
 g2p: null

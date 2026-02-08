@@ -25,3 +25,4 @@ class ESPNetCTCModel(nn.Module):
         ctc_asr_only = [False],
     ):
         super().__init__()
+        self.token_list = token_list
