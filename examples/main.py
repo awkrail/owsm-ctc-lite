@@ -1,12 +1,17 @@
 import argparse
-from owsm_ctc_model import OWSM_CTC_Model
-# from audio_preprocessor import AudioPreprocessor
+import torch
+import sys
+sys.path.append(".")
+
+from owsm_ctc_lite.owsm_ctc_model import OWSMCTCModel
 
 
 def main(args):
-    model = OWSM_CTC_Model(
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    model = OWSMCTCModel(
         config_path = "model_card/config.yaml",
         model_path = "model_card/valid.total_count.ave_5best.till40epoch.pth",
+        device = device,
     )
     res = model.predict(args.input_audio_path)
 

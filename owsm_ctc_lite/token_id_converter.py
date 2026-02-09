@@ -23,4 +23,7 @@ class TokenIDConverter:
 
 
     def tokens2ids(self, tokens):
-        return [self.token2id.get(i, self.unk_id) for i in tokens]
+        try:
+            return [self.token2id.get(i, self.unk_id) for i in tokens]
+        except:
+            import ipdb; ipdb.set_trace()
