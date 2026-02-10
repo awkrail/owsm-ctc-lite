@@ -1,4 +1,5 @@
 import torch.nn as nn
+from torch_complex import ComplexTensor
 
 from owsm_ctc_lite.log_mel import LogMel
 from owsm_ctc_lite.stft import Stft
@@ -56,11 +57,16 @@ class AudioFrontEnd(nn.Module):
 
 
     def forward(self, input, input_lengths):
+        # 1. STFT
         input_stft, feats_lens = self._compute_stft(input, input_lengths)
+        # 2. STFT -> Power spectrum
+        input_power = input_stft.real**2 + input_stft.imag**2
+        # 3. LogMel
+        input_feats, _ = self.logmel(input_power, feats_lens)
+        return input_feats, feats_lens
 
 
     def _compute_stft(self, input, input_lengths):
         input_stft, feats_lens = self.stft(input, input_lengths)
-        import ipdb; ipdb.set_trace()
-        input_stft = ComplexTensor(input[..., 0], input[..., 1])
+        input_stft = ComplexTensor(input_stft[..., 0], input_stft[..., 1])
         return input_stft, feats_lens

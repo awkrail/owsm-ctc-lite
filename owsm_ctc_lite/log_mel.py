@@ -1,3 +1,5 @@
+import librosa
+import torch
 import torch.nn as nn
 
 
@@ -26,3 +28,13 @@ class LogMel(nn.Module):
         )
         self.mel_options = _mel_options
         self.log_base = log_base
+        
+        melmat = librosa.filters.mel(**_mel_options)
+        self.register_buffer("melmat", torch.from_numpy(melmat.T).float())
+
+
+    def forward(self, feat, ilens):
+        mel_feat = torch.matmul(feat, self.melmat)
+        mel_feat = torch.clamp(mel_feat, min=1e-10) # should be >0
+        logmel_feat = mel_feat.log()
+        return logmel_feat, ilens
