@@ -194,7 +194,7 @@ class OWSMCTCModel:
         vocab_size = len(token_list)
 
         # Audio frontend
-        frontend = AudioFrontEnd()
+        frontend = AudioFrontEnd(**args.frontend_conf)
         input_size = frontend.output_size()
 
         # Normalizer

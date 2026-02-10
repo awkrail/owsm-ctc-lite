@@ -56,10 +56,11 @@ class AudioFrontEnd(nn.Module):
 
 
     def forward(self, input, input_lengths):
-        import ipdb; ipdb.set_trace()
         input_stft, feats_lens = self._compute_stft(input, input_lengths)
 
 
-
-
+    def _compute_stft(self, input, input_lengths):
+        input_stft, feats_lens = self.stft(input, input_lengths)
         import ipdb; ipdb.set_trace()
+        input_stft = ComplexTensor(input[..., 0], input[..., 1])
+        return input_stft, feats_lens
