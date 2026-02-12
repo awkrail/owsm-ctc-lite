@@ -54,3 +54,12 @@ class ESPNetCTCModel(nn.Module):
     ):
         feats, feats_lengths = self.frontend(speech, speech_lengths)
         feats = self.normalize(feats)
+        encoder_out, encoder_out_lens, _ = self.encoder(
+            feats,
+            feats_lengths,
+            ctc = self.ctc,
+            prefix_embeds = self.embed_proj(self.embed(prefix)),
+            memory = self.prompt_proj(memory),
+            memory_mask = memory_mask,
+        )
+        return encoder_out, encoder_out_lens

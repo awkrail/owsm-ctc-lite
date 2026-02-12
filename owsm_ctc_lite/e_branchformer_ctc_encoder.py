@@ -1,5 +1,7 @@
 import torch.nn as nn
 
+from owsm_ctc_lite.swish import Swish
+
 
 class EBranchformerCTCEncoder(nn.Module):
     def __init__(
@@ -36,7 +38,72 @@ class EBranchformerCTCEncoder(nn.Module):
     ):
         super().__init__()
         self._output_size = output_size
+        
+        self.embed = Conv2dSubsampling8(
+            input_size,
+            output_size,
+            dropout_rate,
+            PositionalEncoding(output_size, positional_dropout_rate, max_pos_emb_len),
+        )
+
+        activation = Swish()
+        positionwise_layer = PositionwiseFeedForward
+        positionwise_layer_args = (
+            output_size,
+            linear_units,
+            dropout_rate,
+            activation,
+        )
+
+        encoder_selfattn_layer = MultiheadAttention
+        encoder_selfattn_layer_args = (
+            attention_heads,
+            output_size,
+            attention_dropout_rate,
+            False,
+            use_flash_attn,
+        )
+
+        cgmlp_layer = ConvolutionalGatingMLP
+        cgmlp_layer_args = (
+            output_size,
+            cgmlp_linear_units,
+            cgmlp_conv_kernel,
+            dropout_rate,
+            use_linear_after_conv,
+            gate_activation,
+        )
+        
+        self.encoders = repeat(
+            num_blocks,
+            lambda lnum: EBranchformerEncoderLayer(
+                output_size,
+                encoder_selfattn_layer(*encoder_selfattn_layer_args),
+                cgmlp_layer(*cgmlp_layer_args),
+                positionwise_layer(*positionwise_layer_args) if use_ffn else None,
+                positionwise_layer(*positionwise_layer_args) if use_ffn and macaron_ffn else None,
+                MultiheadAttention(
+                    attention_heads,
+                    output_size,
+                    attention_dropout_rate,
+                    False,
+                    use_flash_attn,
+                    cross_attn = True,
+                ) if use_cross_attention[lnum] else None,
+                dropout_rate,
+                merge_conv_kernel,
+            ),
+            layer_drop_rate,
+        )
+        self.after_norm = LayerNorm(output_size)
+        self.interctc_layer_idx = interctc_layer_idx
+        self.interctc_use_conditioning = interctc_use_conditioning
+        self.conditioning_layer = None
 
 
     def output_size(self):
         return self._output_size
+
+
+    def forward(self, xs_pad, ilens):
+        pass
