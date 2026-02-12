@@ -53,4 +53,4 @@ class ESPNetCTCModel(nn.Module):
         prefix_lengths,
     ):
         feats, feats_lengths = self.frontend(speech, speech_lengths)
-        feats, feats_lengths = self.normalize(feats, feats_lengths)
+        feats = self.normalize(feats)

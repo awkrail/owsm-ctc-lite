@@ -29,3 +29,18 @@ class GlobalMVN(nn.Module):
 
         self.register_buffer("mean", mean)
         self.register_buffer("std", std)
+
+    
+    def forward(self, x):
+        norm_means = self.norm_means
+        norm_vars = self.norm_vars
+        self.mean = self.mean.to(x.device, x.dtype)
+        self.std = self.std.to(x.device, x.dtype)
+
+        if norm_means:
+            x -= self.mean
+
+        if norm_vars:
+            x /= self.std
+
+        return x
