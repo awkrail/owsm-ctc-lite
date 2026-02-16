@@ -3,5 +3,5 @@ import torch.nn as nn
 
 
 class Swish(nn.Module):
-    def (self, x):
+    def forward(self, x):
         return x * torch.sigmoid(x)

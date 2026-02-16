@@ -1,6 +1,61 @@
 import torch.nn as nn
 
+from owsm_ctc_lite.subsampling import Conv2dSubsampling8
+from owsm_ctc_lite.positional_encoding import PositionalEncoding
+from owsm_ctc_lite.positionwise_feed_forward import PositionwiseFeedForward
+from owsm_ctc_lite.attention import MultiheadAttention
+from owsm_ctc_lite.cgmlp import ConvolutionalGatingMLP
+from owsm_ctc_lite.layer_norm import LayerNorm
+
 from owsm_ctc_lite.swish import Swish
+
+
+class EBranchformerEncoderLayer(nn.Module):
+    def __init__(
+        self,
+        size,
+        attn,
+        cgmlp,
+        feed_forward,
+        feed_forward_macaron,
+        cross_attn,
+        dropout_rate,
+        merge_conv_kernel = 3,
+    ):
+        super().__init__()
+        self.size = size
+        self.attn = attn
+        self.cgmlp = cgmlp
+        self.feed_forward = feed_forward
+        self.feed_forward_macaron = feed_forward_macaron
+        
+        self.ff_scale = 1.0
+        if self.feed_forward is not None:
+            self.norm_ff = LayerNorm(size)
+
+        if self.feed_forward_macaron is not None:
+            self.ff_scale = 0.5
+            self.norm_ff_macaron = LayerNorm(size)
+        
+        self.norm_mha = LayerNorm(size)
+        self.norm_mlp = LayerNorm(size)
+        self.norm_final = LayerNorm(size)
+
+        self.cross_attn = cross_attn
+        if self.cross_attn is not None:
+            self.norm_cross_attn = LayerNorm(size)
+
+        self.dropout = nn.Dropout(dropout_rate)
+        self.depthwise_conv_fusion = nn.Conv1d(
+            size + size,
+            size + size,
+            kernel_size = merge_conv_kernel,
+            stride = 1,
+            padding = (merge_conv_kernel - 1) // 2,
+            groups = size + size,
+            bias = True,
+        )
+        self.merge_proj = nn.Linear(size + size, size)
 
 
 class EBranchformerCTCEncoder(nn.Module):
@@ -74,6 +129,7 @@ class EBranchformerCTCEncoder(nn.Module):
             gate_activation,
         )
         
+        # todo: implement repeat
         self.encoders = repeat(
             num_blocks,
             lambda lnum: EBranchformerEncoderLayer(
@@ -99,6 +155,7 @@ class EBranchformerCTCEncoder(nn.Module):
         self.interctc_layer_idx = interctc_layer_idx
         self.interctc_use_conditioning = interctc_use_conditioning
         self.conditioning_layer = None
+        import ipdb; ipdb.set_trace()
 
 
     def output_size(self):
