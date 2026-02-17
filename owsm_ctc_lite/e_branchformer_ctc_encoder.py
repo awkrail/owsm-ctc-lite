@@ -6,6 +6,7 @@ from owsm_ctc_lite.positionwise_feed_forward import PositionwiseFeedForward
 from owsm_ctc_lite.attention import MultiheadAttention
 from owsm_ctc_lite.cgmlp import ConvolutionalGatingMLP
 from owsm_ctc_lite.layer_norm import LayerNorm
+from owsm_ctc_lite.repeat import repeat
 
 from owsm_ctc_lite.swish import Swish
 
