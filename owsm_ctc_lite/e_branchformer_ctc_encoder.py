@@ -156,7 +156,6 @@ class EBranchformerCTCEncoder(nn.Module):
         self.interctc_layer_idx = interctc_layer_idx
         self.interctc_use_conditioning = interctc_use_conditioning
         self.conditioning_layer = None
-        import ipdb; ipdb.set_trace()
 
 
     def output_size(self):
@@ -164,4 +163,4 @@ class EBranchformerCTCEncoder(nn.Module):
 
 
     def forward(self, xs_pad, ilens):
-        pass
+        import ipdb; ipdb.set_trace()

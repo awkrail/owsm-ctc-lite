@@ -1,5 +1,7 @@
 import torch.nn as nn
 
+from owsm_ctc_lite.positional_encoding import PositionalEncoding
+
 
 class ESPNetCTCModel(nn.Module):
     def __init__(
@@ -41,6 +43,16 @@ class ESPNetCTCModel(nn.Module):
         self.normalize = normalize
         self.encoder = encoder
         self.prompt_encoder = prompt_encoder
+
+        self.embed = nn.Embedding(vocab_size, self.prompt_encoder.output_size())
+        self.pos_enc = PositionalEncoding(self.prompt_encoder.output_size(), 0.0)
+
+        self.embed_proj = nn.Linear(self.prompt_encoder.output_size(), self.encoder.output_size())
+        self.prompt_proj = nn.Linear(self.prompt_encoder.output_size(), self.encoder.output_size())
+        self.encoder.conditioning_layer = nn.Linear(vocab_size, self.encoder.output_size())
+
+        self.ctc = ctc
+        self.extract_feats_in_collect_stats = extract_feats_in_collect_stats
 
     
     def encode(

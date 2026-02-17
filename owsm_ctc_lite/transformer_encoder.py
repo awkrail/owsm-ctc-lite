@@ -1,8 +1,6 @@
 import torch.nn as nn
 
-
-class PositionalEncoding:
-    pass
+from owsm_ctc_lite.positional_encoding import PositionalEncoding
 
 
 class TransformerEncoder(nn.Module):
@@ -32,3 +30,7 @@ class TransformerEncoder(nn.Module):
     ):
         super().__init__()
         self._output_size = output_size
+
+
+    def output_size(self):
+        return self._output_size
