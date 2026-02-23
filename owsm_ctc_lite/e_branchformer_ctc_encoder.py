@@ -59,6 +59,17 @@ class EBranchformerEncoderLayer(nn.Module):
         self.merge_proj = nn.Linear(size + size, size)
 
 
+    def forward(
+        self,
+        x_input,
+        mask,
+        cache = None,
+        memory = None,
+        memory_mask = None,
+    ):
+        pass
+
+
 class EBranchformerCTCEncoder(nn.Module):
     def __init__(
         self,
@@ -162,5 +173,14 @@ class EBranchformerCTCEncoder(nn.Module):
         return self._output_size
 
 
-    def forward(self, xs_pad, ilens):
+    def forward(self,
+        xs_pad,
+        ilens,
+        prev_states = None,
+        ctc = None,
+        max_layer = None,
+        prefix_embeds = None,
+        memory = None,
+        memory_mask = None
+    ):
         import ipdb; ipdb.set_trace()
